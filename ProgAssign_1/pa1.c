@@ -1,6 +1,6 @@
 #include <stdio.h>
 
 int main() {
-    printf("Hello World!\n");
+    printf("Please enter a length to convert, in the form <number> <input-unit> <output-unit>.\nEnter any letter to quit.\n");
     return 0;
 }
