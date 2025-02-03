@@ -2,25 +2,39 @@
 #include <ctype.h>
 #include <string.h>
 
-int capture_and_scan_input(double * value, char * input_string, char * output_string) {
+int capture_and_scan_input(double *value, char *input_string, char *output_string) {
+    char user_input[100];
 
-    
+    fgets(user_input, 100, stdin);
+    user_input[strcspn(user_input, "\n")] = 0;
+
+    if (strlen(user_input) == 1 && isalpha(user_input[0])) {
+        return 1;
+    }
+    else {
+        puts(user_input);
+        return sscanf(user_input,"%lf %s %s",value,input_string,output_string);
+    }
 }
 
 int main() {
     puts("Please enter a length to convert, in the form <number> <input-unit> <output-unit>.");
     puts("Enter any letter to quit.");
-    char user_input[100];
+
+    double num;
+    char input_unit[100];
+    char output_unit[100];
+
     while (1) {
         printf("> ");
-        fgets(user_input, 100, stdin);
-        user_input[strcspn(user_input, "\n")] = 0;
-        if (strlen(user_input) == 1 && isalpha(user_input[0])) {
+        if (capture_and_scan_input(&num, input_unit, output_unit) == 1) {
             break;
         }
-        else {
-            puts(user_input);
-        }
+        printf("%lf\n", num);
+        puts(input_unit);
+        puts(output_unit);
     }
+
     return 0;
 }
+
