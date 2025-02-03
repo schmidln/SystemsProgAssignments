@@ -3,6 +3,7 @@
 #include <string.h>
 
 int capture_and_scan_input(double *value, char *input_string, char *output_string) {
+    printf("> ");
     char user_input[100];
 
     fgets(user_input, 100, stdin);
@@ -25,11 +26,7 @@ int main() {
     char input_unit[100];
     char output_unit[100];
 
-    while (1) {
-        printf("> ");
-        if (capture_and_scan_input(&num, input_unit, output_unit) == 1) {
-            break;
-        }
+    while (capture_and_scan_input(&num, input_unit, output_unit) == 3 ) {
         printf("%lf\n", num);
         puts(input_unit);
         puts(output_unit);
