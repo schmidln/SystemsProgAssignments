@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #define SAMPLES 1000
 #define RUNS 10
 #define HISTOGRAM_SPAN 2.0
 #define BINS 10
+#define SCALE 1
 
 double get_mean_of_uniform_random_samples() {
     double sum = 0;
@@ -14,53 +16,45 @@ double get_mean_of_uniform_random_samples() {
         sum += rand();
     }
 
-    double rand_average  = sum / SAMPLES;
+    double rand_average = sum / SAMPLES;
     double in_range_value = rand_average / RAND_MAX;
     in_range_value *= 2.0;
     in_range_value -= 1.0;
     return in_range_value;
 }
 
-double populate_values_and_get_mean(double * values) {
+double populate_values_and_get_mean(double *values) {
     double sum = 0;
 
     for (int i = 0; i < RUNS; ++i) {
-    	values[i] =  get_mean_of_uniform_random_samples();
-	sum += values[i];
+        values[i] = get_mean_of_uniform_random_samples();
+        sum += values[i];
     }
 
-    double mean_over_sample_averages = sum / RUNS;
-    return mean_over_sample_averages;
+    return sum / RUNS;
 }
 
-double get_mean_squared_error(double * values, double mean) {
+double get_mean_squared_error(double *values, double mean) {
     double error;
     double sum = 0;
     for (int i = 0; i < RUNS; ++i) {
         error = values[i] - mean;
-	error *= error;
-	sum += error;
+        error *= error;
+        sum += error;
     }
-    
-    return sum / RUNS;    
+
+    return sum / RUNS;
 }
 
 void create_histogram(double *values, int *counts) {
+    memset(counts, 0, BINS * sizeof(int));
 
-    for (int i = 0; i < BINS; ++i) {
-        counts[i] = 0;
-    }
-
-    
     double bin_size = HISTOGRAM_SPAN / (double)BINS;
     double min_value = -HISTOGRAM_SPAN / 2;
 
-    
     for (int i = 0; i < RUNS; ++i) {
-       
         int bin_index = (int)((values[i] - min_value) / bin_size);
 
-        
         if (bin_index < 0) {
             bin_index = 0;
         } else if (bin_index >= BINS) {
@@ -71,10 +65,39 @@ void create_histogram(double *values, int *counts) {
     }
 }
 
+void print_histogram(int *counts) {
+    double bin_size = HISTOGRAM_SPAN / (double)BINS;
+    double bin_start = -HISTOGRAM_SPAN / 2;
+
+    for (int i = 0; i < BINS; ++i) {
+        double bin_label = bin_start + bin_size / 2;
+        int num_xs = counts[i] / SCALE;
+
+        printf("%6.3f | ", bin_label);
+        
+        for (int j = 0; j < num_xs; ++j) {
+            printf("X");
+        }
+        printf("\n");
+
+        bin_start += bin_size;
+    }
+}
+
 int main() {
     srand(time(NULL));
-    double * values = (double *) calloc(RUNS, sizeof(double));
-    printf("Mean: %lf\n", populate_values_and_get_mean(values));
-    printf("Mean squared error: %lf\n",
-        get_mean_squared_error(values, populate_values_and_get_mean(values)));
+
+    double *values = (double *)calloc(RUNS, sizeof(double));
+    int counts[BINS];
+
+    double mean = populate_values_and_get_mean(values);
+    printf("Mean: %lf\n", mean);
+    printf("Mean squared error: %lf\n", get_mean_squared_error(values, mean));
+
+    create_histogram(values, counts);
+    print_histogram(counts);
+
+    free(values);
+    return 0;
 }
+
