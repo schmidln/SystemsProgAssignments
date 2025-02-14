@@ -4,6 +4,8 @@
 
 #define SAMPLES 1000
 #define RUNS 10
+#define HISTOGRAM_SPAN 2.0
+#define BINS 10
 
 double get_mean_of_uniform_random_samples() {
     double sum = 0;
@@ -41,6 +43,32 @@ double get_mean_squared_error(double * values, double mean) {
     }
     
     return sum / RUNS;    
+}
+
+void create_histogram(double *values, int *counts) {
+
+    for (int i = 0; i < BINS; ++i) {
+        counts[i] = 0;
+    }
+
+    
+    double bin_size = HISTOGRAM_SPAN / (double)BINS;
+    double min_value = -HISTOGRAM_SPAN / 2;
+
+    
+    for (int i = 0; i < RUNS; ++i) {
+       
+        int bin_index = (int)((values[i] - min_value) / bin_size);
+
+        
+        if (bin_index < 0) {
+            bin_index = 0;
+        } else if (bin_index >= BINS) {
+            bin_index = BINS - 1;
+        }
+
+        counts[bin_index]++;
+    }
 }
 
 int main() {
