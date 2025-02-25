@@ -1,3 +1,10 @@
+/*
+ * Authors: Lucas Schmidt and Andy Bello
+ * Assignment: PA2 - Visualizing the Central Limit Theorem
+ * Description: This program creates a graphical representation of the central limit theorem.
+ * Date: February 14th, 2025
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
