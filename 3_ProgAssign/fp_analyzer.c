@@ -1,23 +1,31 @@
+/*
+ * Authors: Andy Bello - belloac@bc.edu, Lucas Schmidt - schmidln@bc.edu
+*/
+
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "fp_analyzer.h"
 
-// Function to print bits from left to right
 void print_bits(UINT_TYPE value, int bit_count) {
     for (int i = bit_count - 1; i >= 0; i--) {
         putchar((value & ((UINT_TYPE)1 << i)) ? '1' : '0');
     }
 }
 
-// Function to print components of a floating-point number
 void print_components(FP_TYPE value) {
     Converter conv;
     conv.floating_point = value;
-    
-    printf("%g -> ", value);
-    print_bits(conv.integer_representation, sizeof(FP_TYPE) * 8);
+    printf("Bits: ");
+    print_bits(conv.components.sign, SIGN_BITS);
+    printf("|");
+    print_bits(conv.components.exponent, EXPONENT_BITS);
+    printf("|");
+    print_bits(conv.components.mantissa, MANTISSA_BITS);
     printf("\n");
 }
 
-// Function to compute power of 2 without using pow()
 FP_TYPE power_of_2(int exponent) {
     FP_TYPE result = 1.0;
     if (exponent >= 0) {
@@ -32,26 +40,63 @@ FP_TYPE power_of_2(int exponent) {
     return result;
 }
 
-// Function to print normalized floating-point representation
 void print_normalized(FP_TYPE value, Components comp) {
-    FP_TYPE mantissa = 1.0 + ((FP_TYPE)comp.mantissa / power_of_2(MANTISSA_BITS));
+    printf("Original value:\n");
+    FP_TYPE mantissa = ((FP_TYPE)comp.mantissa / power_of_2(MANTISSA_BITS));
+    printf("(-1)^{%d} x (1 + ", (int)comp.sign);
+    printf(SPECIFIER, mantissa);
+    printf(") x 2^{%d - %d}\n", (int)comp.exponent, BIAS);
     int true_exponent = (int)comp.exponent - BIAS;
+    mantissa += 1;
+    int negative_one_power;
+    if ((int)comp.sign == 0) {
+        negative_one_power = 1;
+    } else {
+        negative_one_power = -1;
+    }
+    printf("  = %d x ", negative_one_power);
+    printf(SPECIFIER, mantissa);
+    printf(" x 2^{%d}\n", true_exponent);
+    mantissa *= negative_one_power;
+    printf("  = ");
+    printf(SPECIFIER, mantissa);
+    printf(" x %.0f\n", power_of_2(true_exponent));
     FP_TYPE reconstructed = mantissa * power_of_2(true_exponent);
-    printf("Reconstructed: %.45f\n", reconstructed);
+    printf("  = %.45f\n", reconstructed);
 }
 
-// Function to print denormalized floating-point representation
 void print_denormalized(FP_TYPE value, Components comp) {
     if (comp.exponent == 0 && comp.mantissa == 0) {
-        printf("Zero\n");
+	if (comp.sign == 1) {
+	    printf("Original value: -0.0\n");
+	} else {
+	    printf("Original value: 0.0\n");
+	}
     } else {
-        FP_TYPE mantissa = ((FP_TYPE)comp.mantissa / power_of_2(MANTISSA_BITS));
-        FP_TYPE reconstructed = mantissa * power_of_2(1 - BIAS);
-        printf("Reconstructed: %.45f\n", reconstructed);
+        printf("Original value:\n");
+	FP_TYPE mantissa = ((FP_TYPE)comp.mantissa / power_of_2(MANTISSA_BITS));
+	printf("(-1)^{%d} x ", (int)comp.sign);
+        printf("%.45f", mantissa);
+	printf(" x 2^{1 - %d}\n", BIAS);
+	int negative_one_power;
+	if (comp.sign == 0) {
+	    negative_one_power = 1;
+	} else {
+	    negative_one_power = -1;
+	}
+	printf("  = %d x ", negative_one_power);
+	printf(SPECIFIER, mantissa);
+	printf(" x 2^{%d}\n", 1 - BIAS);
+	mantissa *= negative_one_power;
+	FP_TYPE two_raised_to_abs_bias =  power_of_2(BIAS - 1);
+	printf("  = ");
+	printf("%.45f", mantissa);
+	printf(" x 1/%.0f\n", two_raised_to_abs_bias);
+	FP_TYPE reconstructed = mantissa * power_of_2(1 - BIAS);
+        printf("  = %.45f\n", reconstructed);
     }
 }
 
-// Function to determine and print reconstitution
 void print_reconstitution(FP_TYPE value, Components comp) {
     if (comp.exponent == 0) {
         print_denormalized(value, comp);
