@@ -33,6 +33,7 @@ void walk_dir(char * dir, int indent) {
         }
 
 
+    }
 }
 
 int main(int argc, char ** argv) {
