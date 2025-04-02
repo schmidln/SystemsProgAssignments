@@ -7,11 +7,23 @@ Andy Bello - belloac@bc.edu
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
 
 int show_hidden = 0;
 
 void walk_dir(char *dir, int indent) {
-    // To be implemented
+    DIR *dp = opendir(dir);
+    if (dp == NULL) {
+        perror("opendir");
+        return;
+    }
+
+    struct dirent *entry;
+    while (entry = readdir(dp) != NULL) {
+        
+    }
+
+
 }
 
 int main(int argc, char **argv) {
