@@ -18,14 +18,14 @@ int is_pwd_or_parent(char * filename) {
    return 1;
 }
 
-void walk_dir(char *dir, int indent) {
-    DIR *dp = opendir(dir);
+void walk_dir(char * dir, int indent) {
+    DIR * dp = opendir(dir);
     if (dp == NULL) {
         perror("opendir");
         return;
     }
 
-    struct dirent *entry;
+    struct dirent * entry;
     while (entry = readdir(dp) != NULL) {
         
     }
@@ -33,7 +33,7 @@ void walk_dir(char *dir, int indent) {
 
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char ** argv) {
     if (argc == 2) {
         if (strcmp(argv[1], "-l") == 0) {
             // "-l" is not valid by itself
@@ -55,7 +55,6 @@ int main(int argc, char **argv) {
     }
 
     else {
-        // Either no args or too many
         return EXIT_FAILURE;
     }
 }
