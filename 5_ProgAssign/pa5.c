@@ -11,6 +11,13 @@ Andy Bello - belloac@bc.edu
 
 int show_hidden = 0;
 
+int is_pwd_or_parent(char * filename) {
+   (*filename[0] == '.') {
+       return 1;
+   }
+   return 0;
+}
+
 void walk_dir(char *dir, int indent) {
     DIR *dp = opendir(dir);
     if (dp == NULL) {
