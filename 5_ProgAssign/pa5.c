@@ -31,6 +31,9 @@ void walk_dir(char * dir, int indent) {
         if (is_pwd_or_parent(entry -> d_name)) {
             continue;
         }
+        if (entry -> d_name[0] == 46 && show_hidden == 0) {
+            continue;
+        }
 
 
     }
