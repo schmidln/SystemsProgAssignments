@@ -11,11 +11,8 @@ Andy Bello - belloac@bc.edu
 
 int show_hidden = 0;
 
-int is_pwd_or_parent(char * filename) {
-   if ((filename[0] == 46 && (sizeof(filename)/sizeof(filename[0]) == 1)) || (filename[0] == 46 && filename[1] == 46 && (sizeof(filename)/sizeof(filename[0]) == 2))){
-       return 1;
-   }
-   return 0;
+int is_pwd_or_parent(char *filename) {
+    return (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0);
 }
 
 void walk_dir(char * dir, int indent) {
