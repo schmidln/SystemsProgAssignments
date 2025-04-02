@@ -15,6 +15,15 @@ int is_pwd_or_parent(char *filename) {
     return (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0);
 }
 
+void indent(int indent) {
+    for (int i = 0; i < indent; i++) {
+        putchar(' ');
+        putchar(' ');
+        putchar(' ');
+        putchar(' ');
+    }
+}
+
 void walk_dir(char * dir, int indent) {
     DIR * dp = opendir(dir);
     if (dp == NULL) {
@@ -31,8 +40,14 @@ void walk_dir(char * dir, int indent) {
         if (entry -> d_name[0] == 46 && show_hidden == 0) {
             continue;
         }
-
-
+        if (entry -> d_type == DT_DIR) {
+            printf("%s", entry -> d_name);
+            putchar(':');
+            putchar('\n');
+            walk_dir(entry -> d_name, indent + 1);
+        }
+        indent(indent);
+        printf("%s\n", entry -> d_name);
     }
 }
 
