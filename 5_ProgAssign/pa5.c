@@ -26,14 +26,11 @@ void walk_dir(char * dir, int indent) {
     }
 
     struct dirent * entry;
+
     while ((entry = readdir(dp)) != NULL) {
         if (is_pwd_or_parent(entry -> d_name)) {
             continue;
         }
-
-
-
-    }
 
 
 }
@@ -60,7 +57,6 @@ int main(int argc, char ** argv) {
     }
 
     else {
-        // Either no args or too many
         return EXIT_FAILURE;
     }
 }
