@@ -32,7 +32,6 @@ void walk_dir(char * dir, int indent_level) {
         if (entry->d_name[0] == 46 && show_hidden == 0) {
             continue;
         } 
-
         if (entry->d_type == DT_DIR) {
             indent(indent_level);
             printf("%s", entry->d_name);
@@ -47,7 +46,6 @@ void walk_dir(char * dir, int indent_level) {
             printf("%s\n", entry->d_name);   
         }
     }
-
     closedir(dp);
 }
 
