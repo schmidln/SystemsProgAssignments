@@ -29,24 +29,24 @@ void walk_dir(char * dir, int indent_level) {
     struct dirent * entry;
 
     while ((entry = readdir(dp)) != NULL) {
-        if (is_pwd_or_parent(entry -> d_name)) {
+        if (is_pwd_or_parent(entry->d_name)) {
             continue;
         } 
-        if (entry -> d_name[0] == 46 && show_hidden == 0) {
+        if (entry->d_name[0] == 46 && show_hidden == 0) {
             continue;
         } 
 
-        if (entry -> d_type == DT_DIR) {
-            printf("%s", entry -> d_name);
+        if (entry->d_type == DT_DIR) {
+            printf("%s", entry->d_name);
             putchar(':');
             putchar('\n');
-            size_t buffer_length = strlen(dir) + 1 + strlen(entry -> d_name) + 1;
+            size_t buffer_length = strlen(dir) + 1 + strlen(entry->d_name) + 1;
             char buffer[buffer_length];
-            snprintf(buffer, buffer_length, "%s/%s", dir, entry -> d_name);
+            snprintf(buffer, buffer_length, "%s/%s", dir, entry->d_name);
             walk_dir(buffer, indent_level + 1); 
         } else {
             indent(indent_level);
-            printf("%s\n", entry -> d_name);   
+            printf("%s\n", entry->d_name);   
         }
     }
 
