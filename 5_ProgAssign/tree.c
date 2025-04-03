@@ -22,12 +22,9 @@ void indent(int indent) {
 void walk_dir(char * dir, int indent_level) {
     DIR * dp = opendir(dir);
     if (dp == NULL) {
-        perror("Error opening file");
         return;
     }
-
     struct dirent * entry;
-
     while ((entry = readdir(dp)) != NULL) {
         if (is_pwd_or_parent(entry->d_name)) {
             continue;
@@ -37,6 +34,7 @@ void walk_dir(char * dir, int indent_level) {
         } 
 
         if (entry->d_type == DT_DIR) {
+            indent(indent_level);
             printf("%s", entry->d_name);
             putchar(':');
             putchar('\n');
