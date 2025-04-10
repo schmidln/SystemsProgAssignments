@@ -13,6 +13,14 @@
 #define TRUE 1
 #define MICROSECONDS_PER_SECOND 1000000
 
+void init(const int dim, int * const m) {
+    for (int i = 0; i < dim; i++) {
+        for (int j = 0; j < dim; j++) {
+            m[i * dim + j] = rand() % MAX_VALUE;
+        }
+    }
+}
+
 void multiply(const int dim, const int * const a, int * const b, int * const c){
     for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++) {
@@ -24,51 +32,23 @@ void multiply(const int dim, const int * const a, int * const b, int * const c){
     } 
 }
 
-void print(const int dim, const int * const m) {
-    for (int i = 0; i < dim; i++) {
-    	for (int j = 0; j < dim; j++) {
-	    printf("   %d", m[i * dim + j]);
-        }
-        putchar('\n');
-    }
-}
-
 void transpose(const int dim, int * const m) {
     for (int i = 0; i < dim; i++) {
-    	for (int j = 0; j < i; j++) {
-	    int tmp = m[i * dim + j];
-	    m[i * dim + j] = m[j * dim + i];
-	    m[j * dim + i] = tmp;
-	}
+        for (int j = 0; j < i; j++) {
+            int tmp = m[i * dim + j];
+            m[i * dim + j] = m[j * dim + i];
+            m[j * dim + i] = tmp;
+        }
     }
 }
 
 void multiply_transpose(const int dim, const int * const a, int * const b_t, int * const c) {
     for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++) {
-	    c[i * dim + j] = 0;
-	    for (int k = 0; k < dim; k++) {
-	        c[i * dim + j] += a[i * dim + k] * b_t[j * dim + k];
-	    }    
-	}
-    }
-}
-
-int verify(const int dim, const int * const c1, const int * const c2) {
-    for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++) {
-	    if (c1[i * dim + j] != c2[i * dim + j]) {
-		   return FALSE;
-	    } 
-	}
-    }
-    return TRUE;
-}
-
-void init(const int dim, int * const m) {
-    for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++) {
-            m[i * dim + j] = rand() % MAX_VALUE;
+            c[i * dim + j] = 0;
+            for (int k = 0; k < dim; k++) {
+                c[i * dim + j] += a[i * dim + k] * b_t[j * dim + k];
+            }
         }
     }
 }
@@ -98,6 +78,17 @@ struct timeval run_and_time(
         elapsed.tv_usec += MICROSECONDS_PER_SECOND;
     }
     return elapsed;
+}
+
+int verify(const int dim, const int * const c1, const int * const c2) {
+    for (int i = 0; i < dim; i++) {
+        for (int j = 0; j < dim; j++) {
+            if (c1[i * dim + j] != c2[i * dim + j]) {
+                   return FALSE;
+            }
+        }
+    }
+    return TRUE;
 }
 
 double get_speedup(struct timeval * result1, struct timeval * result2) {
@@ -136,10 +127,18 @@ void run_test(const int dim) {
     free(c2);
 }
 
+void print(const int dim, const int * const m) {
+    for (int i = 0; i < dim; i++) {
+        for (int j = 0; j < dim; j++) {
+            printf("   %d", m[i * dim + j]);
+        }
+        putchar('\n');
+    }
+}
+
 int main() {
     for (int power = MIN_DIM_POWER; power <= MAX_DIM_POWER; power++) {
         run_test(1 << power);
     }
     return EXIT_SUCCESS;    
 }
-
